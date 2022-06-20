@@ -92,60 +92,70 @@ const [notificationPopup, setNotificationPopup] = useState(false)
       alert("Error fetching Posts");
     }
   };
+ 
   return (
     <>
-    {notificationPopup && newNotification !== null && <NotificationPortal 
-     newNotification={newNotification}
-  notificationPopup={notificationPopup}
-  setNotificationPopup={setNotificationPopup}
-    />}
+      {notificationPopup && newNotification !== null && (
+        <NotificationPortal
+          newNotification={newNotification}
+          notificationPopup={notificationPopup}
+          setNotificationPopup={setNotificationPopup}
+        />
+      )}
       {showToastr && <PostDeleteToastr />}
-         {newMessageModal && newMessagereceived !== null && <MessageNotificationModal 
-         socket={socket}
-         setNewMessageModal={setNewMessageModal}
-         newMessageModal={newMessageModal}
-         newMessagereceived={newMessagereceived}
+      {newMessageModal && newMessagereceived !== null && (
+        <MessageNotificationModal
+          socket={socket}
+          setNewMessageModal={setNewMessageModal}
+          newMessageModal={newMessageModal}
+          newMessagereceived={newMessagereceived}
           user={user}
-         />}
-
+        />
+      )}
 
       <Segment>
-        {" "}
-        <CreatePost user={user} setPosts={setPosts} />
-        {posts.length === 0 || errorLoading ? (
-          <NoPosts />
-        ) : (
-          <InfiniteScroll
-            hasMore={hasMore}
-            next={fetchDataOnScroll}
-            loader={<PlaceHolderPosts />}
-            endMessage={<EndMessage />}
-            dataLength={posts.length}
-          >
-            {posts.map((post) => (
-              <CardPost
-                socket={socket}
-                key={post._id}
-                post={post}
-                user={user}
-                setPosts={setPosts}
-                setShowToastr={setShowToastr}
-              />
-            ))}
-          </InfiniteScroll>
-        )}
+        <div>
+          {" "}
+          <CreatePost
+            user={user}
+            setPosts={setPosts}
+          />
+          {posts?.length === 0 || errorLoading ? (
+            <NoPosts />
+          ) : (
+            <InfiniteScroll
+              hasMore={hasMore}
+              next={fetchDataOnScroll}
+              loader={<PlaceHolderPosts />}
+              endMessage={<EndMessage />}
+              dataLength={posts?.length}
+            >
+              {posts.map((post) => (
+                <CardPost
+                  socket={socket}
+                  key={post._id}
+                  post={post}
+                  user={user}
+                  setPosts={setPosts}
+                  setShowToastr={setShowToastr}
+                />
+              ))}
+            </InfiniteScroll>
+          )}
+        </div>
       </Segment>
     </>
   );
 };
 index.getInitialProps = async (ctx) => {
   try {
+    
     const { token } = parseCookies(ctx);
     const res = await axios.get(`${baseUrl}/api/posts`, {
       headers: { Authorization: token },
       params: { pageNumber: 1 },
     });
-    return { postData: res.data };
+    return { postData: res.data  };
   } catch (error) {
     return { errorLoading: true };
   }

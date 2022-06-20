@@ -1,9 +1,12 @@
-import React, { useRef, useState } from 'react'
-import { Button, Divider, Form, Icon, Image,  Message } from "semantic-ui-react"
+import React, { useEffect, useRef, useState } from 'react'
+import { Button, Divider, Form, Icon, Image,  Message, Transition } from "semantic-ui-react"
 import uploadPic from "../../utils/uploadPicToCloudinary"
 import { submitNewPost } from '../../utils/postActions'
 import CropImageModal from './CropImageModal'
 const CreatePost = ({user,setPosts}) => {
+
+
+
   const [newPost, setNewPost] = useState({text:"",location:""})
   const [loading, setLoading] = useState(false)
   const inputRef = useRef()
@@ -11,8 +14,10 @@ const CreatePost = ({user,setPosts}) => {
   const [highlighted, setHighlighted] = useState(false)
   const [media, setMedia] = useState(null)
   const [mediaPreview, setMediaPreview] = useState(null)
-
+  
    const [showModal, setShowModal] = useState(false)
+   const [showImgBox, setShowImgBox] = useState(false)
+   const [showLocation, setShowLocation] = useState(false)
   const handleChange = e => {
     const {name,value,files} = e.target
     if(name === "media"){
@@ -42,28 +47,39 @@ const CreatePost = ({user,setPosts}) => {
     setTimeout(()=>setMediaPreview(null),3000);
     setLoading(false);
   };
+  useEffect(() => {
+   if(!showImgBox){
+     media &&  setMedia(null);
+       mediaPreview !== null && URL.revokeObjectURL(mediaPreview);
+       setMediaPreview(null);
+   }
+  }, [showImgBox])
+  
   const addStyles=()=>({
             textAlign: "center",
-            height: "150px",
-            width: "150px",
-            border: "dotted",
+            height: "200px",
+            width: "300px",
+            border: mediaPreview?"none":"2px solid",
             paddingTop: media === null && "60px",
             cursor: "pointer",
-            borderColor: highlighted ? "green" : "black",
+            borderColor: highlighted ? "green" : "gray",
+            display:showImgBox?"block":"none",
+           marginLeft:"9rem"
           })
+
+ 
   return (
     <>
       {showModal && (
-        <CropImageModal 
-         mediaPreview={mediaPreview}
-         setMedia={setMedia}
-         showModal={showModal}
-         setShowModal={setShowModal}
-         setMediaPreview={setMediaPreview}
+        <CropImageModal
+          mediaPreview={mediaPreview}
+          setMedia={setMedia}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          setMediaPreview={setMediaPreview}
+          showImgBox={showImgBox}
         />
       )}
-
-
 
       <Form error={error !== null} onSubmit={handleSubmit}>
         <Message
@@ -72,26 +88,97 @@ const CreatePost = ({user,setPosts}) => {
           content={error}
           header="Oops"
         />
-        <Form.Group>
-          <Image src={user.profilePicUrl} circular avatar inline />
+
+        <Form.Group
+          style={{
+            paddingTop: "2rem",
+            paddingLeft: "1.3rem",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "row",
+            marginBottom: "1rem",
+          }}
+        >
+          <Image
+            src={user.profilePicUrl}
+            circular
+            avatar
+            inline
+            floated="left"
+            style={{
+              height: "3rem",
+              width: "3rem",
+              marginLeft: "0.1rem !important",
+              position: "absolute",
+              top: "2rem",
+              left: "-8px",
+            }}
+          />
+
           <Form.TextArea
             placeholder="What's happening?"
             name="text"
             value={newPost.text}
             onChange={handleChange}
-            rows={4}
-            width={14}
+            rows={3}
+            width={"13"}
+            style={{
+              borderTop: "0px",
+              borderLeft: "0px",
+              borderRight: "0px",
+              borderBottom: "1.6px solid gray",
+              borderRadius: "0",
+              fontSize: "1.4rem",
+              position: "relatrive",
+              marginLeft: "10px",
+            }}
           />
         </Form.Group>
+
         <Form.Group>
-          <Form.Input
-            value={newPost.location}
-            name="location"
-            onChange={handleChange}
-            label="Add Location"
-            icon="map marker alternate"
-            placeholder="Want to add Location"
-          />
+          <Button
+            type="button"
+            style={{ backgroundColor: "whiteSmoke", margin: "0.5rem 1.2rem" }}
+            icon
+            circular
+          >
+            <Icon
+              name="image"
+              size="big"
+              style={{ margin: "0.5rem 1.2rem", color: "#1DA1F2" }}
+              onClick={() => {
+                setShowImgBox(!showImgBox);
+                setMedia(null);
+                setMediaPreview(null);
+              }}
+            />
+          </Button>
+          <Button
+            type="button"
+            style={{ backgroundColor: "whiteSmoke", margin: "0.5rem 1.2rem" }}
+            icon
+            circular
+            onClick={() => {
+              setShowLocation(!showLocation);
+            }}
+          >
+            <Icon
+              name="map marker alternate"
+              size="big"
+              style={{ margin: "0.3rem 0.2rem", color: "#1DA1F2" }}
+            />
+          </Button>
+          <div style={{ display: showLocation ? "block" : "none" }}>
+            <Form.Input
+              style={{ marginBottom: "6px" }}
+              value={newPost.location}
+              name="location"
+              onChange={handleChange}
+              label="Add Location"
+              icon="map marker alternate"
+              placeholder="Want to add Location"
+            />
+          </div>
 
           <input
             ref={inputRef}
@@ -123,12 +210,13 @@ const CreatePost = ({user,setPosts}) => {
         >
           {media === null ? (
             <>
-              <Icon name="plus" size="big" />
+              <h3> Drag & drop image or click here to select image</h3>
+              <Icon name="image" size="big" />
             </>
           ) : (
             <>
               <Image
-                style={{ height: "150px", width: "150px" }}
+                style={{ height: "300px", width: "300px" }}
                 src={mediaPreview}
                 alt="PostImage"
                 centered
@@ -138,16 +226,18 @@ const CreatePost = ({user,setPosts}) => {
             </>
           )}
         </div>
-        {mediaPreview !== null && <>
-        <Divider  hidden/>
-         <Button 
-         content="Crop Image"
-         type='button'
-         primary
-         circular
-         onClick={()=> setShowModal(true)}
-         />
-        </>}
+        {mediaPreview !== null && showImgBox !== false && (
+          <>
+            <Divider hidden />
+            <Button
+              content="Crop Image"
+              type="button"
+              primary
+              circular
+              onClick={() => setShowModal(true)}
+            />
+          </>
+        )}
         <Divider hidden />
         <Button
           circular

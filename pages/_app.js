@@ -9,9 +9,19 @@ import { redirectUser} from "../utils/authUser";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout {...pageProps}>
-      <Component {...pageProps} />
-    </Layout>
+    <div
+      
+      //  style={{
+      //   backgroundImage:" radial-gradient(circle, #ffffff, #fafafc, #f6f6f9, #f0f1f7, #ebedf4, #e7ecf3, #e3eaf2, #dfe9f0, #dceaef, #daeaee, #d9ebec, #d8ebe9)"
+      // }}
+    >
+      <Layout
+       
+        {...pageProps}
+      >
+        <Component {...pageProps} />
+      </Layout>
+    </div>
   );
 }
 MyApp.getInitialProps = async ({ Component ,ctx}) => {const {token} = parseCookies(ctx)

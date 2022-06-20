@@ -20,6 +20,7 @@ const ImageModel = ({post,user,setLikes,likes,isLiked,comments,setComments}) => 
         <Grid.Column>
           <Modal.Content image>
               <Image
+              fluid
                 wrapped
                 size="big"
                 src={post.picUrl}

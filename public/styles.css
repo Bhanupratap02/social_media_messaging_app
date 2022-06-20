@@ -3,13 +3,16 @@
 }
 
 body {
-  background: var(--bodyBg);
+  /* background: var(--bodyBg); */
+  /* background-image: radial-gradient(circle, #ffffff, #fafafc, #f6f6f9, #f0f1f7, #ebedf4, #e7ecf3, #e3eaf2, #dfe9f0, #dceaef, #daeaee, #d9ebec, #d8ebe9); */
+
 }
 
 .spanLikesList:hover {
   text-decoration: underline;
   cursor: pointer;
 }
+
 
 .mySpinner {
   border: 5px solid #f3f3f3;

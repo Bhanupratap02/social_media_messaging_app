@@ -8,6 +8,7 @@ const CropImageModal = ({
   showModal,
   setShowModal,
   setMediaPreview,
+  
 }) => {
   const [cropper, setCropper] = useState();
   const getCropData = () => {

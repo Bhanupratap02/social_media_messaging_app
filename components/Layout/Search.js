@@ -16,7 +16,7 @@ const SearchUser = () => {
  const { value } = e.target;
  setText(value);
 
- if (value.length === 0) return;
+ if (value?.length === 0) return;
 
  //trim will remove white spaces.
  if (value.trim().length === 0) return;
@@ -55,6 +55,7 @@ const SearchUser = () => {
        loading && setLoading(false)
        setText("")
         }}
+        size="huge"
       loading={loading}
       resultRenderer={ResultRenderer}
       results={results}

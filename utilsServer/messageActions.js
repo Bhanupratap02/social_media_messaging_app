@@ -7,6 +7,7 @@ try {
     const chat = user.chats.find(
     chat => chat.messagesWith._id.toString() === messagesWith
     );
+     setMsgToRead(userId);
     if(!chat){
         return {error:"No chat found"}
     }
@@ -71,7 +72,19 @@ const setMsgToUnread = async userId =>{
     console.log(error)
   }
 }
+const setMsgToRead = async userId =>{
+  try {
+    const user = await UserModel.findById(userId);
 
+    if (user.unreadMessage) {
+      user.unreadMessage = false;;
+      await user.save();
+    }
+    return;
+  } catch (error) {
+    console.log(error);
+  }
+}
 const deleteMsg = async (userId,messagesWith,messageId) =>{
   try {
     const user = await ChatModel.findOne({user:userId})

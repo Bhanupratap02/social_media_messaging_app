@@ -38,7 +38,12 @@ const MobileHeader = ({
               />
             </Menu.Item>
           </Link>
-          <Dropdown item icon="bars" direction="left">
+          <Dropdown
+            item
+            icon="bars"
+            direction="left"
+           
+          >
             <Dropdown.Menu>
               <Link href={`/${username}`}>
                 <Dropdown.Item active={isActive(`/${username}`)}>

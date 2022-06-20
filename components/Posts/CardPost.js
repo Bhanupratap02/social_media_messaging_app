@@ -27,7 +27,7 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
     likes.filter((like) => like.user === user._id).length > 0;
   const [comments, setComments] = useState(post.comments);
   const [error, setError] = useState(null);
-
+  const [showComments, setShowComments] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const addPropsToModal = () => ({
     post,
@@ -56,40 +56,35 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
           </Modal.Content>
         </Modal>
       )}
+
       <Segment basic>
-        <Card color="teal" fluid>
-          {post.picUrl && (
-            <Image
-              src={post.picUrl}
-              style={{ cursor: "pointer" }}
-              floated="left"
-              wrapped
-              ui={false}
-              alt="PostImage"
-              onClick={() => setShowModal(true)}
-            />
-          )}
+        <Card basic color="white" fluid>
           <Card.Content>
             <Image
               floated="left"
               src={post.user.profilePicUrl}
               avatar
               circular
+              style={{ width: "45px", height: "45px" }}
             />
+
             {(user.role === "root" || post.user._id === user._id) && (
               <>
                 <Popup
                   on="click"
                   position="top right"
                   trigger={
-                    <Button icon="trash" circular size="mini" color="red" />
+                    <Image
+                      src="/deleteIcon.svg"
+                      style={{ cursor: "pointer" }}
+                      size="mini"
+                      floated="right"
+                    />
                   }
-                  style={{ cursor: "pointer" }}
-                  size="mini"
-                  floated="right"
                 >
-                  <Header as="h4" content="Are you sure" />
-                  <p>This actio is irreversible</p>
+                  <Header as="h4" content="Are you sure?" />
+                  <p>This action is irreversible!</p>
+
                   <Button
                     color="red"
                     icon="trash"
@@ -99,7 +94,6 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                     }
                   />
                 </Popup>
-                <Divider hidden />
               </>
             )}
 
@@ -108,7 +102,9 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                 <a>{post.user.name}</a>
               </Link>
             </Card.Header>
+
             <Card.Meta>{calculateTime(post.createdAt)}</Card.Meta>
+
             {post.location && <Card.Meta content={post.location} />}
 
             <Card.Description
@@ -121,10 +117,22 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
               {post.text}
             </Card.Description>
           </Card.Content>
+          {post.picUrl && (
+            <Image
+              src={post.picUrl}
+              style={{ cursor: "pointer" }}
+              floated="left"
+              wrapped
+              ui={false}
+              alt="PostImage"
+              onClick={() => setShowModal(true)}
+            />
+          )}
           <Card.Content extra>
             <Icon
               name={isLiked ? "heart" : "heart outline"}
               color="red"
+              size="large"
               style={{ cursor: "pointer" }}
               onClick={() => {
                 if (socket.current) {
@@ -133,13 +141,15 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                     userId: user._id,
                     like: isLiked ? false : true,
                   });
-                  //  isliked is true then user want to unlike so false otherwise want to like so true
+
                   socket.current.on("postLiked", () => {
                     if (isLiked) {
                       setLikes((prev) =>
                         prev.filter((like) => like.user !== user._id)
                       );
-                    } else {
+                    }
+                    //
+                    else {
                       setLikes((prev) => [...prev, { user: user._id }]);
                     }
                   });
@@ -153,6 +163,7 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                 }
               }}
             />
+
             <LikesList
               postId={post._id}
               trigger={
@@ -163,12 +174,17 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                 )
               }
             />
+
             <Icon
               name="comment outline"
               style={{ marginLeft: "7px" }}
               color="blue"
+              size="large"
+              onClick={() => setShowComments(!showComments)}
             />
-            {comments.length > 0 &&
+
+            {showComments &&
+              comments.length > 0 &&
               comments.map(
                 (comment, i) =>
                   i < 3 && (
@@ -181,7 +197,8 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                     />
                   )
               )}
-            {comments.length > 3 && (
+
+            {showComments && comments.length > 3 && (
               <Button
                 content="View More"
                 color="teal"
@@ -190,12 +207,15 @@ const CardPost = ({ post, user, setPosts, setShowToastr, socket }) => {
                 onClick={() => setShowModal(true)}
               />
             )}
-            <Divider hidden />
-            <CommentInput
-              user={user}
-              postId={post._id}
-              setComments={setComments}
-            />
+            {showComments && <Divider hidden />}
+
+            {showComments && (
+              <CommentInput
+                user={user}
+                postId={post._id}
+                setComments={setComments}
+              />
+            )}
           </Card.Content>
         </Card>
       </Segment>

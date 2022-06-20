@@ -115,8 +115,10 @@ const Messages = ({ chatsData, errorLoading, user }) => {
 
           setChats(prev =>{
             const previousChat = prev.find(chat => chat.messagesWith === newMsg.receiver)
-            previousChat.lastMessage = newMsg.msg;
+           if(previousChat){
+             previousChat.lastMessage = newMsg.msg;
             previousChat.date = newMsg.date
+          }
 
               return [...prev];
           });
@@ -207,6 +209,7 @@ const Messages = ({ chatsData, errorLoading, user }) => {
        alert("Error deleting Chat")
      }
    }
+    
   return (
     <>
       <Segment padded basic size="large" style={{ marginTop: "5px" }}>

@@ -34,27 +34,48 @@ function Layout({ children, user }) {
   Router.onRouteChangeError = () => nProgress.done();
 
   return (
-    <>
+    <div>
       <HeadTags />
       {user ? (
         <>
           <style>{mediaStyles}</style>
           <MediaContextProvider>
-            <div style={{ marginLeft: "1rem", marginRight: "1rem" }}>
+            <div
+              style={{
+                marginLeft: "1rem",
+                marginRight: "1rem"
+                
+              }}
+            >
               {/* layout for divices computer size */}
               <Media greaterThanOrEqual="computer">
                 <Ref innerRef={contextRef}>
-                  <Grid>
+                  <Grid
+                   
+                    // style={{
+                    //   backgroundImage:
+                    //     " radial-gradient(circle, #ffffff, #fafafc, #f6f6f9, #f0f1f7, #ebedf4, #e7ecf3, #e3eaf2, #dfe9f0, #dceaef, #daeaee, #d9ebec, #d8ebe9)",
+                    // }}
+                  >
                     {!messagesRoute ? (
                       <>
-                        <Grid.Column floated="left" width={2}>
+                        <Grid.Column
+                          floated="left"
+                          width={3}
+                        >
                           <Sticky context={contextRef}>
                             <SideMenu user={user} pc />
                           </Sticky>
                         </Grid.Column>
 
-                        <Grid.Column width={10}>
-                          <Visibility context={contextRef}>
+                        <Grid.Column
+                         
+                          width={9}
+                        >
+                          <Visibility
+                           
+                            context={contextRef}
+                          >
                             {children}
                           </Visibility>
                         </Grid.Column>
@@ -150,7 +171,7 @@ function Layout({ children, user }) {
           </Container>
         </>
       )}
-    </>
+    </div>
   );
 }
 
